@@ -1,0 +1,58 @@
+# 1 - Preprocesamiento de datos
+
+## MIGUEL 
+- Tratamiento de valores nulos (eliminación, imputación por mediana/moda, valor centinela -1).
+- Procesamiento de variables categoricas: OneHotEncoder (cardinalidad <= 50).
+- Encoding de variables de texto libre con TextEncoder (modelo e5-small-v2).
+- Normalizacion de variables numericas con QuantileTransformer (distribucion normal).
+- Generacion de features cruzadas con PolynomialFeatures (interacciones de grado 2 entre numericas).
+
+## LOLA
+- Tratamiento de valores nulos: Eliminación de variables con >99% de nulos. Imputación avanzada múltiple (MICE / IterativeImputer) para variables numéricas añadiendo banderas binarias (add_indicator=True) para que el modelo aprenda si el "dato faltante" es en sí mismo un patrón de riesgo. Imputación por constante ("DESCONOCIDO") para categóricas.
+- Feature Engineering (Domain Knowledge): Creación de variables con sentido de negocio (financiero) en lugar de crear interacciones polinómicas a ciegas. Se generaron: 'fico_medio' (eliminando los límites inferior y superior originales para evitar multicolinealidad), 'cuota_ingreso_ratio' y 'balance_limite_ratio'. Extracción útil de mes y año para variables temporales (earliest_cr_line).
+- Encoding híbrido de categóricas: OrdinalEncoder para conservar la jerarquía de riesgo en evaluaciones de expertos (grade/sub_grade), y TargetEncoder para transformar variables nominales en probabilidades de impago. Esto evita la explosión de dimensionalidad que provoca el OneHotEncoder.
+- Procesamiento de texto libre: Limpieza previa de ruido y etiquetas de formato (HTML) en la variable de descripción ('desc'). Extracción de características latentes con TextEncoder (modelo e5-small-v2) con renombramiento de columnas para evitar colisiones en los modelos.
+- Transformación de variables numéricas: Se sustituye el QuantileTransformer por RobustScaler para mitigar de forma más efectiva el impacto de los valores atípicos (outliers) severos, muy habituales en datasets de riesgo crediticio y salarios, escalando tanto las variables base como los nuevos ratios financieros.
+
+# 2 - Filtrado de features
+
+## MIGUEL 
+- Filtrado en 3 etapas:
+  1. DropConstantFeatures (tol=0.90).
+  2. DropCorrelatedFeatures (Pearson > 0.80).
+  3. ProbeFeatureSelection (elimina features menos importantes que una variable de ruido aleatorio usando Random Forest).
+
+## LOLA
+- Filtrado avanzado en 3 etapas (priorizando relaciones no lineales y robustez):
+  1. DropConstantFeatures (tol=0.98): Se eleva el umbral de tolerancia respecto a la base. Esto es vital para no eliminar por accidente las "missing indicators" (columnas chivatas binarias) generadas por MICE, las cuales pueden tener muchos ceros pero una alta capacidad predictiva de fraude/riesgo.
+  2. DropCorrelatedFeatures (Spearman > 0.80): Se sustituye la correlación de Pearson por Spearman. Dado que se ha aplicado Target Encoding y Ordinal Encoding en el paso anterior, es imperativo utilizar un método que detecte relaciones monótonas y no estrictamente lineales.
+  3. SelectByShuffling (Permutation Importance): Se sustituye el ProbeFeatureSelection por una técnica más robusta y ampliamente aceptada en la industria. Un Random Forest evalúa la caída real del rendimiento (ROC-AUC) al barajar aleatoriamente los valores de cada feature en validación cruzada. Evita el sesgo de las importancias tradicionales (Gini impurity) que suelen favorecer injustamente a variables de alta cardinalidad.
+
+
+# 3 - Entrenamiento del modelo
+
+## MIGUEL 
+Paste it
+
+## LOLA
+- Ensemble de arboles de decision: 
+- Maquinas de Soporte Vectorial (SVM):
+- Redes neuronales:
+
+
+# 4 - Evaluación en test
+
+## MIGUEL 
+Paste it
+
+## LOLA
+Write it
+
+
+# 5 - Metricas de Evaluación
+
+## MIGUEL 
+Paste it
+
+## LOLA
+Write it

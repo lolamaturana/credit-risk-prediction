@@ -19,7 +19,7 @@ El desarrollo se divide en módulos siguiendo el estándar de ingeniería de sof
 ### Benchmarking y Comparativa
 Este pipeline toma como punto de partida el material didáctico proporcionado en clase por el profesor Miguel Martín. Se ha realizado un análisis crítico de la arquitectura base para implementar mejoras sustanciales en la robustez, el tratamiento de datos no lineales y la ingeniería de variables.
 
-- Repositorio de referencia: https://github.com/mmartinb75/modelizacion_datos_2026/tree/main
+- Repositorio de referencia: https://github.com/mmartinb75/modelizacion_datos_2026
 
 - Análisis comparativo detallado: He incluido un archivo llamado Miguel_VS_Lola.txt donde detallo las diferencias técnicas entre la implementación base realizada en clase y mi propuesta.
 

@@ -11,7 +11,7 @@ class Practica1Preprocess:
 
     def __init__(self, var_to_process, target): # Defina las herramientas que voy a usar y cómo están configuradas
 
-        # Selección inicial de variables — Eliminar variables irrelevantes o que causan *data leakage*
+        # Selección inicial de variables — Eliminar variables irrelevantes o que causan data leakage
         self.raw_predictors_vars = pd.read_excel(var_to_process)
         self.raw_predictors_vars = ( self.raw_predictors_vars
                                     .query("posible_predictora == 'si'")
@@ -19,7 +19,7 @@ class Practica1Preprocess:
                                     .tolist())
         self.target_var = target
 
-        # Según el estándar oficial de Scikit-Learn: Todos los hiperparámetros y la instanciación de las herramientas deben hacerse en el __init__.
+        # Según el estándar oficial de Scikit-Learn: Todos los hiperparámetros y la instanciación de las herramientas deben hacerse en el __init__
         
         # Herramienta para Nulos - Variables Numéricas 
         self.num_imputer = IterativeImputer(max_iter=10, random_state=42, add_indicator=True) 
@@ -97,8 +97,8 @@ class Practica1Preprocess:
 
         if 'earliest_cr_line' in X_valid.columns:   # comprobar que no ha sido eliminada
             X_valid['earliest_cr_line'] = pd.to_datetime(X_valid['earliest_cr_line'])
-            X_valid['earliest_cr_line_year'] = X_valid['earliest_cr_line'].dt.year
-            X_valid['earliest_cr_line_month'] = X_valid['earliest_cr_line'].dt.month.astype(str)
+            X_valid['earliest_cr_line_year'] = X_valid['earliest_cr_line'].dt.year.astype(float)
+            X_valid['earliest_cr_line_month'] = X_valid['earliest_cr_line'].dt.month.astype(float)
 
 
         #####################
@@ -120,8 +120,10 @@ class Practica1Preprocess:
 
         if self.cat_vars:  # si la lista tiene elementos devuelve True
             # Imputador categórico - "DESCONOCIDO"
-            self.cat_imputer.fit(X_valid[self.cat_vars])        
-        
+            self.cat_imputer.fit(X_valid[self.cat_vars]) 
+            # Imputar categóricas antes de los encoders para que no vean NaNs
+            X_valid[self.cat_vars] = self.cat_imputer.transform(X_valid[self.cat_vars])       
+         
         
         #################################################
         # Tratamiento de Variables Categóricas (Encoding)
@@ -141,17 +143,24 @@ class Practica1Preprocess:
 
         # Ajustar el Target Encoder - variables de alta cardinalidad
         if self.cols_to_target_encode:
-            self.target_encoder.fit(X_valid[self.cols_to_target_encode], self.train_y_data)
+            # Variable local para binarizar solo donde hace falta
+            y_binaria = self.train_y_data != 'Fully Paid'
+            self.target_encoder.fit(X_valid[self.cols_to_target_encode], y_binaria)
 
 
         #######################################
-        # Transformación de Variables Numéricas - Voy a transformar también las que he generado
+        # Transformación de Variables Numéricas
         #######################################
+
         if self.num_vars:
-            # Relleno temporal (mediana) solo para permitir que RobustScaler se entrene.
-            # El imputador real (MICE) actuará en el método transform.
-            X_num_temp = X_valid[self.num_vars].fillna(X_valid[self.num_vars].median())
-            self.robust_scaler.fit(X_num_temp)
+            # Entrenamos el scaler sobre datos ya imputados por MICE,
+            imputed_array_fit = self.num_imputer.transform(X_valid[self.num_vars])
+            imputed_cols_fit = self.num_imputer.get_feature_names_out(self.num_vars)
+            # Guardamos las columnas exactas a escalar (sin los indicadores de nulos)
+            self.cols_to_scale = [c for c in imputed_cols_fit if not c.startswith('missingindicator_')]
+            X_num_fit = pd.DataFrame(imputed_array_fit, columns=imputed_cols_fit, index=X_valid.index)
+            self.robust_scaler.fit(X_num_fit[self.cols_to_scale])
+
 
         ##############################
         # Procesamiento de Texto Libre
@@ -212,8 +221,8 @@ class Practica1Preprocess:
 
         if 'earliest_cr_line' in X_data.columns:   
             X_data['earliest_cr_line'] = pd.to_datetime(X_data['earliest_cr_line'])
-            X_data['earliest_cr_line_year'] = X_data['earliest_cr_line'].dt.year
-            X_data['earliest_cr_line_month'] = X_data['earliest_cr_line'].dt.month.astype(str)
+            X_data['earliest_cr_line_year'] = X_data['earliest_cr_line'].dt.year.astype(float)
+            X_data['earliest_cr_line_month'] = X_data['earliest_cr_line'].dt.month.astype(float)
 
 
         #####################
@@ -261,10 +270,10 @@ class Practica1Preprocess:
         # Transformación de Variables Numéricas 
         #######################################
 
-        if num_vars_to_impute:
-            # Escalar ÚNICAMENTE las variables numéricas originales aprendidas en el fit.
-            # Ignoramos las columnas chivatas (missingindicator_) generadas por MICE.
-            X_data[num_vars_to_impute] = self.robust_scaler.transform(X_data[num_vars_to_impute])
+        if self.num_vars:
+            cols_present = [c for c in self.cols_to_scale if c in X_data.columns]
+            X_data[cols_present] = self.robust_scaler.transform(X_data[cols_present])
+        
 
         ##############################
         # Procesamiento de Texto Libre
@@ -293,7 +302,11 @@ class Practica1Preprocess:
         ################
         # Limpieza Final
         ################
+
+        cols_to_drop = [c for c in ['earliest_cr_line', 'issue_d'] if c in X_data.columns]
+        X_data = X_data.drop(columns=cols_to_drop)
         X_data_output = X_data.select_dtypes(exclude=['datetime64[ns]'])
+
 
         ################################
         # Transformar Variable Objetivo

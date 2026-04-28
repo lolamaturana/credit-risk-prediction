@@ -4,19 +4,19 @@
 
 He construido un pipeline end-to-end de Machine Learning para predecir si un cliente devolverá su prestamo o no (detección de impago). Este pipeline incluye preprocesamiento, filtrado y modelado, además de la comparacion del rendimiento de tres familias de modelos diferentes.
 
-- 1. Clase de preprocesamiento:
+1. Clase de preprocesamiento:
 src/preprocessing/practica1_preprocessing.py
 
-- 2. Clase de filtrado:
+2. Clase de filtrado:
 src/filtering/practica1_filtering.py
 
-- 3. Notebook de referencia: 
+3. Notebook de referencia: 
 practica1_notebook.ipynb
 
 
 El pipeline de referencia utiliza el fichero data/variables_withExperts.xlsx 
 
-BIBLIOGRAFÍA:
+### BIBLIOGRAFÍA:
 
 Preprocessing:
 - IterativeImputer: https://scikit-learn.org/stable/modules/generated/sklearn.impute.IterativeImputer.html

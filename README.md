@@ -1,4 +1,6 @@
-# Practica 1 - Modelización en Ingeniería de Datos <img src="https://images.griddo.cunef.edu/logo-cunef-universidad-1272515f-17b3-4169-8bf6-ef63bfffe920" width="190" valign="middle"> 
+# Practica 1 - Modelización en Ingeniería de Datos 
+
+## Curso 2025-26 <img src="https://images.griddo.cunef.edu/logo-cunef-universidad-1272515f-17b3-4169-8bf6-ef63bfffe920" width="190" valign="middle"> 
 
 He construido un pipeline end-to-end de Machine Learning para predecir si un cliente devolverá su prestamo o no (detección de impago). Este pipeline incluye preprocesamiento, filtrado y modelado, además de la comparacion del rendimiento de tres familias de modelos diferentes.
 

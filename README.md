@@ -40,3 +40,9 @@ El pipeline de referencia utiliza el fichero data/variables_withExperts.xlsx
 - DropConstantFeatures: https://feature-engine.trainindata.com/en/1.8.x/user_guide/selection/DropConstantFeatures.html
 - DropCorrelatedFeatures: https://feature-engine.trainindata.com/en/1.8.x/user_guide/selection/DropCorrelatedFeatures.html
 - SelectByShuffling: https://feature-engine.trainindata.com/en/1.8.x/user_guide/selection/SelectByShuffling.html
+
+#### Modelos:
+- RandomForestClassifier: https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestClassifier.html
+- HistGradientBoostingClassifier: https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.HistGradientBoostingClassifier.html
+- Maquinas de Soporte Vectorial (SVM): https://scikit-learn.org/stable/modules/generated/sklearn.svm.SVC.html
+- MLPClassifier: https://scikit-learn.org/stable/modules/generated/sklearn.neural_network.MLPClassifier.html

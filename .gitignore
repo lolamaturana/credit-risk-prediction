@@ -192,3 +192,5 @@ __marimo__/
 *.csv
 *.xlsx
 *.pdf
+
+.DS_Store

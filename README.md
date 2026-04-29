@@ -17,15 +17,25 @@ El desarrollo se divide en módulos siguiendo el estándar de ingeniería de sof
 
 
 ### Benchmarking y Comparativa
-Este pipeline toma como punto de partida el material didáctico proporcionado en clase por el profesor Miguel Martín. Se ha realizado un análisis crítico de la arquitectura base para implementar mejoras sustanciales en la robustez, el tratamiento de datos no lineales y la ingeniería de variables.
+Este pipeline toma como punto de partida el material didáctico proporcionado en clase por el profesor Miguel Martín. Se ha realizado un análisis crítico de la arquitectura base para implementar mejoras sustanciales en la robustez, el tratamiento de datos no lineales y la ingeniería de variables. 
 
-- Repositorio de referencia: https://github.com/mmartinb75/modelizacion_datos_2026
+- **Repositorio de referencia:** https://github.com/mmartinb75/modelizacion_datos_2026
+- **Análisis comparativo detallado:** He incluido un archivo llamado `Miguel_VS_Lola.txt` donde detallo las diferencias técnicas entre la implementación base realizada en clase y mi propuesta de 8 variables optimizadas.
+- **Datos utilizados:** El pipeline utiliza el fichero `data/variables_withExperts.xlsx`.
 
-- Análisis comparativo detallado: He incluido un archivo llamado Miguel_VS_Lola.txt donde detallo las diferencias técnicas entre la implementación base realizada en clase y mi propuesta.
+### Resultados Finales
+Tras un proceso iterativo de entrenamiento y ajuste, estos son los resultados comparativos de los mejores modelos frente al Modelo Base (FICO):
 
+| Modelo | Accuracy | Precision | Recall | PR-AUC | ROC-AUC |
+| :--- | :---: | :---: | :---: | :---: | :---: |
+| **HistGradientBoosting (v1)** | 0.6335 | 0.3067 | 0.6615 | **0.3586** | 0.6982 |
+| **Red Neuronal (MLP v2)** | 0.6219 | 0.3035 | 0.6890 | 0.3580 | **0.7010** |
+| **Modelo Base (FICO)** | 0.7200 | 0.2600 | 0.2400 | 0.3500 | 0.5920 |
+| **SVM (SVC v1)** | 0.6113 | 0.2979 | 0.6960 | 0.3402 | 0.6947 |
 
-El pipeline de referencia utiliza el fichero data/variables_withExperts.xlsx 
-
+#### Conclusión del Benchmarking:
+* **Mejora en Detección:** El pipeline avanzado logra triplicar la capacidad de detección de impagos (**Recall**) respecto al modelo base, pasando del 24% al **casi 70%**.
+* **Modelo Ganador:** Se selecciona el **HistGradientBoosting (v1)** como modelo final por presentar el mejor equilibrio global y el mayor **PR-AUC (0.3586)**, métrica crítica en entornos desbalanceados.
 ### BIBLIOGRAFÍA Y RECURSOS:
 
 #### Preprocessing:

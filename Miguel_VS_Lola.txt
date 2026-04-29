@@ -27,32 +27,3 @@
   1. DropConstantFeatures (tol=0.98): Se eleva el umbral de tolerancia respecto a la base. Esto es vital para no eliminar por accidente las "missing indicators" (columnas chivatas binarias) generadas por MICE, las cuales pueden tener muchos ceros pero una alta capacidad predictiva de fraude/riesgo.
   2. DropCorrelatedFeatures (Spearman > 0.80): Se sustituye la correlación de Pearson por Spearman. Dado que se ha aplicado Target Encoding y Ordinal Encoding en el paso anterior, es imperativo utilizar un método que detecte relaciones monótonas y no estrictamente lineales.
   3. SelectByShuffling (Permutation Importance): Se sustituye el ProbeFeatureSelection por una técnica más robusta y ampliamente aceptada en la industria. Un Random Forest evalúa la caída real del rendimiento (ROC-AUC) al barajar aleatoriamente los valores de cada feature en validación cruzada. Evita el sesgo de las importancias tradicionales (Gini impurity) que suelen favorecer injustamente a variables de alta cardinalidad.
-
-
-# 3 - Entrenamiento del modelo
-
-## MIGUEL 
-Paste it
-
-## LOLA
-- Ensemble de arboles de decision: 
-- Maquinas de Soporte Vectorial (SVM):
-- Redes neuronales:
-
-
-# 4 - Evaluación en test
-
-## MIGUEL 
-Paste it
-
-## LOLA
-Write it
-
-
-# 5 - Metricas de Evaluación
-
-## MIGUEL 
-Paste it
-
-## LOLA
-Write it

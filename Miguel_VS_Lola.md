@@ -14,6 +14,8 @@
 - Procesamiento de texto libre: Limpieza previa de ruido y etiquetas de formato (HTML) en la variable de descripción ('desc'). Extracción de características latentes con TextEncoder (modelo e5-small-v2) con renombramiento de columnas para evitar colisiones en los modelos.
 - Transformación de variables numéricas: Se sustituye el QuantileTransformer por RobustScaler para mitigar de forma más efectiva el impacto de los valores atípicos (outliers) severos, muy habituales en datasets de riesgo crediticio y salarios, escalando tanto las variables base como los nuevos ratios financieros.
 
+---
+
 # 2 - Filtrado de features
 
 ## MIGUEL 

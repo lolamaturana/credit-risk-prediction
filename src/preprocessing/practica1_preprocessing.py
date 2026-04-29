@@ -84,12 +84,14 @@ class Practica1Preprocess:
             ingreso_mensual = X_valid['annual_inc'] / 12
             X_valid['cuota_ingreso_ratio'] = np.where(ingreso_mensual > 0, 
                                                       X_valid['installment'] / ingreso_mensual, 
-                                                      np.nan).astype(float)
+                                                      0.0).astype(float)
             
         if 'revol_bal' in X_valid.columns and 'total_rev_hi_lim' in X_valid.columns:
             X_valid['balance_limite_ratio'] = np.where(X_valid['total_rev_hi_lim'] > 0, 
                                                        X_valid['revol_bal'] / X_valid['total_rev_hi_lim'], 
-                                                       np.nan).astype(float)
+                                                       0.0).astype(float)
+            
+         
         
         ###########################################
         # Extraer mes y año de variables temporales
@@ -129,12 +131,10 @@ class Practica1Preprocess:
         # Tratamiento de Variables Categóricas (Encoding)
         #################################################
 
-        # Proteger las fechas originales para que no entren al TargetEncoder
         temporal_cols = ['earliest_cr_line', 'issue_d']
-
-        # Filtrar: qué va al TargetEncoder (todo lo categórico MENOS ordinales y fechas)
-        self.cols_to_target_encode = [col for col in self.cat_vars 
-                                      if col not in self.ordinal_cols and col not in temporal_cols]
+        text_cols = ['emp_title', 'desc'] # Protegemos el texto libre
+        
+        self.cols_to_target_encode = [col for col in self.cat_vars if col not in self.ordinal_cols and col not in temporal_cols and col not in text_cols]
 
         # Ajustar el Ordinal Encoder - variable ordinales -- grade/sub-grade
         ordinales_vivas = [col for col in self.ordinal_cols if col in self.cat_vars]
@@ -166,7 +166,7 @@ class Practica1Preprocess:
         # Procesamiento de Texto Libre
         ##############################
         if "emp_title" in X_valid.columns:
-            self.text_enc_title.fit(X_valid["emp_title"].fillna("DESCONOCIDO"))
+            self.text_enc_title.fit(X_valid["emp_title"].fillna("DESCONOCIDO").astype(str))
 
         if "desc" in X_valid.columns:
             X_valid['desc_formated'] = np.where(
@@ -207,12 +207,12 @@ class Practica1Preprocess:
             ingreso_mensual = X_data['annual_inc'] / 12
             X_data['cuota_ingreso_ratio'] = np.where(ingreso_mensual > 0, 
                                                      X_data['installment'] / ingreso_mensual, 
-                                                     np.nan).astype(float)
+                                                     0.0).astype(float)
             
         if 'revol_bal' in X_data.columns and 'total_rev_hi_lim' in X_data.columns:
             X_data['balance_limite_ratio'] = np.where(X_data['total_rev_hi_lim'] > 0, 
                                                       X_data['revol_bal'] / X_data['total_rev_hi_lim'], 
-                                                      np.nan).astype(float)
+                                                      0.0).astype(float)
             
 
         ###########################################
@@ -255,8 +255,10 @@ class Practica1Preprocess:
         #################################################
 
         temporal_cols = ['earliest_cr_line', 'issue_d']
+        text_cols = ['emp_title', 'desc']
         
-        cols_to_target_encode = [col for col in cat_vars_to_impute if col not in self.ordinal_cols and col not in temporal_cols]
+        cols_to_target_encode = [col for col in cat_vars_to_impute if col not in self.ordinal_cols and col not in temporal_cols and col not in text_cols]
+
         ordinales_vivas = [col for col in self.ordinal_cols if col in cat_vars_to_impute]
 
         if ordinales_vivas:
@@ -282,17 +284,22 @@ class Practica1Preprocess:
         dfs_de_texto = []
 
         if "emp_title" in X_data.columns:
-            texto_transformado = self.text_enc_title.transform(X_data["emp_title"].fillna("DESCONOCIDO"))
-            # Le asignamos nombres de columna únicos para no colapsar el modelo luego
+            texto_transformado = self.text_enc_title.transform(X_data["emp_title"].fillna("DESCONOCIDO").astype(str))
+
+            texto_transformado_arr = np.array(texto_transformado)
+
             nombres_cols = [f"emp_title_emb_{i}" for i in range(texto_transformado.shape[1])]
-            dfs_de_texto.append(pd.DataFrame(texto_transformado, columns=nombres_cols, index=X_data.index))
+            dfs_de_texto.append(pd.DataFrame(texto_transformado_arr, columns=nombres_cols, index=X_data.index))
             X_data = X_data.drop(columns=["emp_title"])
 
         if "desc" in X_data.columns:
             desc_formated = np.where(X_data['desc'] == 'DESCONOCIDO', 'DESCONOCIDO', X_data['desc'].astype(str).str.split('> ').str[1].str.split('<br>').str[0])
-            texto_transformado_desc = self.text_enc_desc.transform(pd.Series(desc_formated).fillna("DESCONOCIDO"))
-            nombres_cols_desc = [f"desc_emb_{i}" for i in range(texto_transformado_desc.shape[1])]
-            dfs_de_texto.append(pd.DataFrame(texto_transformado_desc, columns=nombres_cols_desc, index=X_data.index))
+            texto_transformado_desc = self.text_enc_desc.transform(pd.Series(desc_formated).fillna("DESCONOCIDO").astype(str))
+
+            texto_transformado_desc_arr = np.array(texto_transformado_desc)
+
+            nombres_cols_desc = [f"desc_emb_{i}" for i in range(texto_transformado_desc_arr.shape[1])]
+            dfs_de_texto.append(pd.DataFrame(texto_transformado_desc_arr, columns=nombres_cols_desc, index=X_data.index))
             X_data = X_data.drop(columns=["desc"])
 
         if dfs_de_texto:

@@ -1,0 +1,14 @@
+[project]
+name = "credit-risk-prediction"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "feature-engine>=1.9.4",
+    "numpy>=2.4.4",
+    "pandas>=3.0.2",
+    "sentence-transformers>=5.4.1",
+    "sklearn-preprocessing>=0.1.0",
+    "skrub>=0.8.0",
+]

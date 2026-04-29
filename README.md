@@ -36,6 +36,11 @@ Tras un proceso iterativo de entrenamiento y ajuste, estos son los resultados co
 #### Conclusión del Benchmarking:
 * **Mejora en Detección:** El pipeline avanzado logra triplicar la capacidad de detección de impagos (**Recall**) respecto al modelo base, pasando del 24% al **casi 70%**.
 * **Modelo Ganador:** Se selecciona el **HistGradientBoosting (v1)** como modelo final por presentar el mejor equilibrio global y el mayor **PR-AUC (0.3586)**, métrica crítica en entornos desbalanceados.
+
+### Reflexión Estratégica de Negocio (El *Trade-Off*):
+¿Por qué elegir un modelo con una precisión cercana al 30%? 
+Con una precisión del 30%, asumimos que estamos cometiendo un volumen alto de **Falsos Positivos** (denegando préstamos a clientes que sí pagarían, lo que supone un coste de oportunidad). Sin embargo, se trata de una **decisión estratégica de negocio** para maximizar el **Recall al ~70%**, asegurándonos de que el banco detecta y esquiva la inmensa mayoría de los **Falsos Negativos**. En el sector bancario, dar un crédito a quien no lo va a devolver es lo que genera las verdaderas pérdidas millonarias.
+  
 ### BIBLIOGRAFÍA Y RECURSOS:
 
 #### Preprocessing:
